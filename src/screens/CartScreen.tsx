@@ -3,15 +3,19 @@ import { View, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import { useCart } from '../context/CartContext';
 import { formatPrice } from '../utils/price';
+import { useTheme } from '../context/ThemeContext';
 
 const Container = styled.ScrollView`
   flex: 1;
-  background-color: #fff;
+  background-color: ${props => props.theme.colors.background};
   padding: 16px;
 `;
 
 const CartItemContainer = styled.View`
   margin-bottom: 24px;
+  background-color: ${props => props.theme.colors.card};
+  border-radius: 8px;
+  padding: 16px;
 `;
 
 const ItemRow = styled.View`
@@ -35,21 +39,22 @@ const ItemName = styled.Text`
   font-size: 20px;
   font-weight: bold;
   margin-bottom: 4px;
+  color: ${props => props.theme.colors.text};
 `;
 
 const QuantityText = styled.Text`
   font-size: 18px;
-  color: #333;
+  color: ${props => props.theme.colors.text};
 `;
 
 const PriceText = styled.Text`
   font-size: 18px;
-  color: #333;
+  color: ${props => props.theme.colors.text};
 `;
 
 const SubtotalText = styled.Text`
   font-size: 18px;
-  color: #666;
+  color: ${props => props.theme.colors.text};
   margin-top: 8px;
 `;
 
@@ -60,7 +65,7 @@ const QuantityControls = styled.View`
 `;
 
 const QuantityButton = styled.TouchableOpacity`
-  background-color: #4285f4;
+  background-color: ${props => props.theme.colors.secondary};
   width: 40px;
   height: 40px;
   border-radius: 20px;
@@ -76,7 +81,7 @@ const QuantityButtonText = styled.Text`
 `;
 
 const RemoveButton = styled.TouchableOpacity`
-  background-color: #ff4444;
+  background-color: ${props => props.theme.colors.error};
   padding: 12px;
   border-radius: 8px;
   align-items: center;
@@ -92,18 +97,19 @@ const RemoveText = styled.Text`
 const TotalContainer = styled.View`
   padding: 16px;
   border-top-width: 1px;
-  border-top-color: #eee;
+  border-top-color: ${props => props.theme.colors.border};
   align-items: center;
 `;
 
 const TotalText = styled.Text`
   font-size: 24px;
   font-weight: bold;
+  color: ${props => props.theme.colors.text};
   margin-bottom: 16px;
 `;
 
 const ClearCartButton = styled.TouchableOpacity`
-  background-color: #888;
+  background-color: ${props => props.theme.colors.secondary};
   padding: 16px;
   border-radius: 8px;
   width: 100%;
@@ -118,6 +124,7 @@ const ClearCartText = styled.Text`
 
 export default function CartScreen() {
   const { cart, dispatch } = useCart();
+  const { colors } = useTheme();
 
   const handleRemoveItem = (id: string) => {
     dispatch({ type: 'REMOVE', id });
@@ -138,7 +145,7 @@ export default function CartScreen() {
   const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   return (
-    <Container>
+    <Container theme={{ colors }}>
       {cart.map(item => (
         <CartItemContainer key={item.id}>
           <ItemRow>

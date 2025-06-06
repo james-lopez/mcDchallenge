@@ -5,15 +5,16 @@ import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, MenuItem } from '../types/navigation';
 import { formatPrice } from '../utils/price';
+import { useTheme } from '../context/ThemeContext';
 
 const Container = styled.View`
   flex: 1;
+  background-color: ${props => props.theme.colors.background};
   padding: 16px;
-  background-color: #fefefe;
 `;
 
 const Card = styled.View`
-  background-color: #fff;
+  background-color: ${props => props.theme.colors.card};
   border-radius: 8px;
   padding: 12px;
   margin-bottom: 16px;
@@ -30,6 +31,7 @@ const Name = styled.Text`
   margin-top: 8px;
   font-size: 16px;
   font-weight: bold;
+  color: ${props => props.theme.colors.text};
 `;
 
 const Price = styled.Text`
@@ -40,6 +42,7 @@ const Price = styled.Text`
 export default function HomeScreen() {
   const [menuItems, setMenuItems] = useState<MenuItem[]>([]);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const { colors } = useTheme();
 
   useEffect(() => {
     fetch('https://burgerhub00.github.io/data/products.json')
@@ -49,7 +52,7 @@ export default function HomeScreen() {
   }, []);
 
   return (
-    <Container>
+    <Container theme={{ colors }}>
       <FlatList
         data={menuItems}
         keyExtractor={item => item.id.toString()}

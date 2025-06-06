@@ -1,4 +1,3 @@
-// components/CartIconWithBadge.tsx
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import styled from 'styled-components/native';
@@ -6,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useCart } from '../context/CartContext';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
+import { useTheme } from '../context/ThemeContext';
 
 const Badge = styled.View`
   position: absolute;
@@ -35,12 +35,17 @@ const IconWrapper = styled.View`
 export default function CartIconWithBadge() {
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
   const { cart } = useCart();
+  const { isDarkMode } = useTheme();
   const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
 
   return (
     <IconContainer onPress={() => navigation.navigate('Cart')}>
       <IconWrapper>
-        <Ionicons name="cart" size={24} color="black" />
+        <Ionicons 
+          name="cart" 
+          size={24} 
+          color={isDarkMode ? '#FFFFFF' : '#000000'} 
+        />
         {totalQty > 0 && (
           <Badge>
             <BadgeText>{totalQty}</BadgeText>
