@@ -4,6 +4,9 @@ export interface MenuItem {
   price: number;
   image: string;
   description: string;
+  nutritional_info?: string;
+  quantity: number;
+  calorie: number;
 }
 
 export type RootStackParamList = {

@@ -1,11 +1,10 @@
 import React from 'react';
 import { Alert } from 'react-native';
 import styled from 'styled-components/native';
-import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, MenuItem } from '../types/navigation';
 import { useCart } from '../context/CartContext';
-
-type Props = NativeStackScreenProps<RootStackParamList, 'Details'>;
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -38,12 +37,6 @@ const Price = styled.Text`
   margin-bottom: 8px;
 `;
 
-const Nutrients = styled.Text`
-  font-size: 14px;
-  color: #888;
-  margin-bottom: 16px;
-`;
-
 const Button = styled.TouchableOpacity`
   background-color: #f04e23;
   padding: 12px;
@@ -57,13 +50,19 @@ const ButtonText = styled.Text`
   font-weight: bold;
 `;
 
-
-export default function DetailScreen({ route, navigation }: Props) {
+export default function DetailScreen() {
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const route = useRoute<RouteProp<RootStackParamList, 'Details'>>();
+  
+  if (!route.params?.item) {
+    return null;
+  }
+  
   const { item } = route.params;
   const { dispatch } = useCart();
 
   const handleAddToCart = (item: MenuItem) => {
-    dispatch({ type: 'ADD', item });
+    dispatch({ type: 'ADD', item: { ...item, quantity: 1 } });
     Alert.alert(
       'Success',
       `Added ${item.name} to cart`,
@@ -82,7 +81,6 @@ export default function DetailScreen({ route, navigation }: Props) {
       <Title>{item.name}</Title>
       <Price>${item.price}</Price>
       <Description>{item.description}</Description>
-      <Nutrients>Nutritional Info: {item.nutritional_info}</Nutrients>
       <Button onPress={() => handleAddToCart(item)}>
         <ButtonText>Add to Cart</ButtonText>
       </Button>

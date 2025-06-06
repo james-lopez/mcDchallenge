@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, TouchableOpacity } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, MenuItem } from '../types/navigation';
 
-const Container = styled.View`
+const Container = styled(SafeAreaView)`
   flex: 1;
+  background-color: #fff;
   padding: 16px;
-  background-color: #fefefe;
 `;
 
 const Card = styled.View`

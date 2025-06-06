@@ -1,85 +1,170 @@
 import React from 'react';
+import { View, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
-import { FlatList, Alert } from 'react-native';
 import { useCart } from '../context/CartContext';
 
-const Container = styled.View`
+const Container = styled.ScrollView`
   flex: 1;
   background-color: #fff;
   padding: 16px;
 `;
 
-const Title = styled.Text`
+const CartItemContainer = styled.View`
+  margin-bottom: 24px;
+`;
+
+const ItemRow = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 8px;
+`;
+
+const ItemImage = styled.Image`
+  width: 80px;
+  height: 80px;
+  border-radius: 8px;
+`;
+
+const ItemDetails = styled.View`
+  flex: 1;
+  margin-left: 16px;
+`;
+
+const ItemName = styled.Text`
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 4px;
+`;
+
+const QuantityText = styled.Text`
+  font-size: 18px;
+  color: #333;
+`;
+
+const PriceText = styled.Text`
+  font-size: 18px;
+  color: #333;
+`;
+
+const SubtotalText = styled.Text`
+  font-size: 18px;
+  color: #666;
+  margin-top: 8px;
+`;
+
+const QuantityControls = styled.View`
+  flex-direction: row;
+  align-items: center;
+  margin-left: auto;
+`;
+
+const QuantityButton = styled.TouchableOpacity`
+  background-color: #4285f4;
+  width: 40px;
+  height: 40px;
+  border-radius: 20px;
+  align-items: center;
+  justify-content: center;
+  margin: 0 8px;
+`;
+
+const QuantityButtonText = styled.Text`
+  color: white;
+  font-size: 24px;
+  font-weight: bold;
+`;
+
+const RemoveButton = styled.TouchableOpacity`
+  background-color: #ff4444;
+  padding: 12px;
+  border-radius: 8px;
+  align-items: center;
+  margin-top: 8px;
+`;
+
+const RemoveText = styled.Text`
+  color: white;
+  font-size: 16px;
+  font-weight: bold;
+`;
+
+const TotalContainer = styled.View`
+  padding: 16px;
+  border-top-width: 1px;
+  border-top-color: #eee;
+  align-items: center;
+`;
+
+const TotalText = styled.Text`
   font-size: 24px;
   font-weight: bold;
   margin-bottom: 16px;
 `;
 
-const ItemCard = styled.View`
-  padding: 12px;
-  border: 1px solid #eee;
+const ClearCartButton = styled.TouchableOpacity`
+  background-color: #888;
+  padding: 16px;
   border-radius: 8px;
-  margin-bottom: 12px;
-  background-color: #fafafa;
+  width: 100%;
+  align-items: center;
 `;
 
-const ItemName = styled.Text`
-  font-size: 18px;
-  font-weight: 600;
-`;
-
-const ItemPrice = styled.Text`
-  font-size: 16px;
-  color: #666;
-  margin-top: 4px;
-`;
-
-const RemoveButton = styled.TouchableOpacity`
-  margin-top: 10px;
-  background-color: #f04e23;
-  padding: 8px 12px;
-  border-radius: 4px;
-  align-self: flex-start;
-`;
-
-const RemoveText = styled.Text`
+const ClearCartText = styled.Text`
   color: white;
+  font-size: 18px;
   font-weight: bold;
-`;
-
-const Total = styled.Text`
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 20px;
 `;
 
 export default function CartScreen() {
   const { cart, dispatch } = useCart();
 
-  const handleRemove = (id: string) => {
+  const handleRemoveItem = (id: string) => {
     dispatch({ type: 'REMOVE', id });
   };
 
-  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  const handleUpdateQuantity = (id: string, quantity: number) => {
+    dispatch({ type: 'UPDATE_QUANTITY', id, quantity });
+  };
+
+  const handleClearCart = () => {
+    dispatch({ type: 'CLEAR' });
+  };
+
+  const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
   return (
     <Container>
-      <Title>Your Cart</Title>
-      <FlatList
-        data={cart}
-        keyExtractor={item => item.id.toString()}
-        renderItem={({ item }) => (
-          <ItemCard>
-            <ItemName>{item.name}</ItemName>
-            <ItemPrice>${item.price}</ItemPrice>
-            <RemoveButton onPress={() => handleRemove(item.id)}>
-              <RemoveText>Remove</RemoveText>
-            </RemoveButton>
-          </ItemCard>
-        )}
-      />
-      <Total>Total: ${total.toFixed(2)}</Total>
+      {cart.map(item => (
+        <CartItemContainer key={item.id}>
+          <ItemRow>
+            <ItemImage source={{ uri: item.image }} />
+            <ItemDetails>
+              <ItemName>{item.name}</ItemName>
+              <QuantityText>Quantity: {item.quantity}</QuantityText>
+              <PriceText>Price: ${item.price.toFixed(2)}</PriceText>
+            </ItemDetails>
+          </ItemRow>
+          <QuantityControls>
+            <QuantityButton onPress={() => handleUpdateQuantity(item.id, item.quantity - 1)}>
+              <QuantityButtonText>-</QuantityButtonText>
+            </QuantityButton>
+            <QuantityButton onPress={() => handleUpdateQuantity(item.id, item.quantity + 1)}>
+              <QuantityButtonText>+</QuantityButtonText>
+            </QuantityButton>
+          </QuantityControls>
+          <SubtotalText>Subtotal: ${(item.price * item.quantity).toFixed(2)}</SubtotalText>
+          <RemoveButton onPress={() => handleRemoveItem(item.id)}>
+            <RemoveText>Remove</RemoveText>
+          </RemoveButton>
+        </CartItemContainer>
+      ))}
+      
+      <TotalContainer>
+        <TotalText>Total: ${total.toFixed(2)}</TotalText>
+        <ClearCartButton onPress={handleClearCart}>
+          <ClearCartText>Clear Cart</ClearCartText>
+        </ClearCartButton>
+      </TotalContainer>
     </Container>
   );
 }
