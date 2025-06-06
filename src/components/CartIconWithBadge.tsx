@@ -6,6 +6,7 @@ import { useCart } from '../context/CartContext';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
 import { useTheme } from '../context/ThemeContext';
+import { TouchableOpacity } from 'react-native';
 
 const Badge = styled.View`
   position: absolute;
@@ -32,26 +33,28 @@ const IconWrapper = styled.View`
   position: relative;
 `;
 
-export default function CartIconWithBadge() {
-  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+const CartIconWithBadge = () => {
   const { cart } = useCart();
-  const { isDarkMode } = useTheme();
-  const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
+  const theme = useTheme();
 
   return (
-    <IconContainer onPress={() => navigation.navigate('Cart')}>
-      <IconWrapper>
-        <Ionicons 
-          name="cart" 
-          size={24} 
-          color={isDarkMode ? '#FFFFFF' : '#000000'} 
-        />
-        {totalQty > 0 && (
-          <Badge>
-            <BadgeText>{totalQty}</BadgeText>
-          </Badge>
-        )}
-      </IconWrapper>
-    </IconContainer>
+    <TouchableOpacity 
+      onPress={() => navigation.navigate('Cart')}
+      testID="cart-icon"
+    >
+      <Ionicons 
+        name="cart-outline" 
+        size={24} 
+        color={theme.colors.text}
+      />
+      {cart.length > 0 && (
+        <Badge testID="cart-badge">
+          <BadgeText>{cart.length}</BadgeText>
+        </Badge>
+      )}
+    </TouchableOpacity>
   );
-}
+};
+
+export default CartIconWithBadge;
