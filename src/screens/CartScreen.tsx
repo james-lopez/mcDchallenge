@@ -2,6 +2,7 @@ import React from 'react';
 import { View, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import { useCart } from '../context/CartContext';
+import { formatPrice } from '../utils/price';
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -123,7 +124,11 @@ export default function CartScreen() {
   };
 
   const handleUpdateQuantity = (id: string, quantity: number) => {
-    dispatch({ type: 'UPDATE_QUANTITY', id, quantity });
+    if (quantity > 0) {
+      dispatch({ type: 'UPDATE_QUANTITY', id, quantity });
+    } else {
+      handleRemoveItem(id);
+    }
   };
 
   const handleClearCart = () => {
@@ -141,7 +146,7 @@ export default function CartScreen() {
             <ItemDetails>
               <ItemName>{item.name}</ItemName>
               <QuantityText>Quantity: {item.quantity}</QuantityText>
-              <PriceText>Price: ${item.price.toFixed(2)}</PriceText>
+              <PriceText>Price: {formatPrice(item.price)}</PriceText>
             </ItemDetails>
           </ItemRow>
           <QuantityControls>
@@ -152,7 +157,7 @@ export default function CartScreen() {
               <QuantityButtonText>+</QuantityButtonText>
             </QuantityButton>
           </QuantityControls>
-          <SubtotalText>Subtotal: ${(item.price * item.quantity).toFixed(2)}</SubtotalText>
+          <SubtotalText>Subtotal: {formatPrice(item.price * item.quantity)}</SubtotalText>
           <RemoveButton onPress={() => handleRemoveItem(item.id)}>
             <RemoveText>Remove</RemoveText>
           </RemoveButton>
@@ -160,7 +165,7 @@ export default function CartScreen() {
       ))}
       
       <TotalContainer>
-        <TotalText>Total: ${total.toFixed(2)}</TotalText>
+        <TotalText>Total: {formatPrice(total)}</TotalText>
         <ClearCartButton onPress={handleClearCart}>
           <ClearCartText>Clear Cart</ClearCartText>
         </ClearCartButton>

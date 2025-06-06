@@ -63,13 +63,5 @@ export const useCart = () => {
   if (!context) {
     throw new Error('useCart must be used within a CartProvider');
   }
-  
-  const addToCart = (item: CartItem) => {
-    context.dispatch({ type: 'ADD', item });
-  };
-  return {
-    cart: context.cart,
-    dispatch: context.dispatch,
-    addToCart
-  };
+  return context;  // Just return the context directly
 };

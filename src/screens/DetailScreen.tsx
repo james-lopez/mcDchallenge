@@ -5,6 +5,7 @@ import { RouteProp, useRoute, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, MenuItem } from '../types/navigation';
 import { useCart } from '../context/CartContext';
+import { formatPrice } from '../utils/price';
 
 const Container = styled.ScrollView`
   flex: 1;
@@ -61,17 +62,12 @@ export default function DetailScreen() {
   const { item } = route.params;
   const { dispatch } = useCart();
 
-  const handleAddToCart = (item: MenuItem) => {
+  const handleAddToCart = () => {
     dispatch({ type: 'ADD', item: { ...item, quantity: 1 } });
     Alert.alert(
       'Success',
       `Added ${item.name} to cart`,
-      [
-        {
-          text: 'OK',
-          onPress: () => navigation.popToTop()
-        }
-      ]
+      [{ text: 'OK', onPress: () => navigation.popToTop() }]
     );
   };
 
@@ -79,9 +75,9 @@ export default function DetailScreen() {
     <Container>
       <ProductImage source={{ uri: item.image }} />
       <Title>{item.name}</Title>
-      <Price>${item.price}</Price>
+      <Price>{formatPrice(item.price)}</Price>
       <Description>{item.description}</Description>
-      <Button onPress={() => handleAddToCart(item)}>
+      <Button onPress={handleAddToCart}>
         <ButtonText>Add to Cart</ButtonText>
       </Button>
     </Container>

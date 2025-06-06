@@ -15,11 +15,26 @@ export default function AppNavigator() {
     <NavigationContainer>
       <Stack.Navigator
         screenOptions={{
+          headerStyle: {
+            backgroundColor: '#fff',
+          },
+          headerTitleStyle: {
+            fontSize: 24,
+            fontWeight: 'bold'
+          },
           headerRight: () => <CartIconWithBadge />,
           headerTitleAlign: 'left'
         }}
       >
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen 
+          name="Home" 
+          component={HomeScreen}
+          options={{
+            headerLeftContainerStyle: {
+              width: 40
+            }
+          }}
+        />
         <Stack.Screen name="Details" component={DetailScreen} />
         <Stack.Screen name="Cart" component={CartScreen} />
       </Stack.Navigator>

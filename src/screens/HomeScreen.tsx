@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, TouchableOpacity } from 'react-native';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import styled from 'styled-components/native';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList, MenuItem } from '../types/navigation';
+import { formatPrice } from '../utils/price';
 
-const Container = styled(SafeAreaView)`
+const Container = styled.View`
   flex: 1;
-  background-color: #fff;
   padding: 16px;
+  background-color: #fefefe;
 `;
 
 const Card = styled.View`
@@ -58,7 +58,7 @@ export default function HomeScreen() {
             <Card>
               <BurgerImage source={{ uri: item.image }} />
               <Name>{item.name}</Name>
-              <Price>${item.price}</Price>
+              <Price>{formatPrice(item.price)}</Price>
             </Card>
           </TouchableOpacity>
         )}
