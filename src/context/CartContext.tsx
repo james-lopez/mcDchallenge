@@ -1,13 +1,7 @@
 import React, { createContext, useReducer, useContext, ReactNode } from 'react';
+import { MenuItem } from '../types/navigation';
 
-interface CartItem {
-  id: string;
-  name: string;
-  price: number;
-  image?: string;
-  description?: string;
-  quantity: number;
-}
+type CartItem = Omit<MenuItem, 'nutritional_info'>;
 
 type CartAction = 
   | { type: 'ADD'; item: CartItem }
@@ -48,7 +42,6 @@ const cartReducer = (state: CartItem[], action: CartAction): CartItem[] => {
   }
 };
 
-
 export const CartProvider = ({ children }: { children: ReactNode }) => {
   const [cart, dispatch] = useReducer(cartReducer, []);
   return (
@@ -63,5 +56,5 @@ export const useCart = () => {
   if (!context) {
     throw new Error('useCart must be used within a CartProvider');
   }
-  return context;  // Just return the context directly
+  return context;
 };
